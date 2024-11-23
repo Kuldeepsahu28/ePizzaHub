@@ -1,0 +1,39 @@
+﻿@model ePizzaHub.UI.Models.LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="row">
+    <div class="col-md-4 offset-md-4">
+        <h4 class="mt-5">Login here</h4>
+        <form asp-action="Login" asp-route-returnUrl="@Context.Request.Query["returnUrl"]">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-floating mt-2">
+                <input asp-for="Email" class="form-control" placeholder=""/>
+                <label asp-for="Email" class="control-label"></label>
+
+@*                 <span asp-validation-for="Email" class="text-danger"></span>
+ *@            </div>
+            <div class="form-floating mt-2">
+                <input asp-for="Password" class="form-control" placeholder=""/>
+                <label asp-for="Password" class="control-label"></label>
+
+@*                 <span asp-validation-for="Password" class="text-danger"></span>
+ *@             
+            </div>
+           
+            <div class="form-group d-grid mt-2">
+                <input style="font-size:x-large;" type="submit" value="Login" class="btn btn-dark btn-block btn-lg py-2" />
+                <p>Don't have an account? <a asp-action="Signup" asp-controller="Account">Create an account here</a></p>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+@section scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+
+}

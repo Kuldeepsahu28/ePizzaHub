@@ -1,0 +1,142 @@
+﻿@model ePizzaHub.Models.PaymentModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h3>Payment Details</h3>
+@if (Model != null && Model.Cart.Items.Count > 0)
+{
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Order Items (@Model.Cart.Items.Count())</h4>
+                </div>
+                <div class="card-body table-responsive">
+                    <table class="table table-hover">
+                        <thead class="text-center table-secondary">
+                            <tr>
+                                <th>Details</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-center">
+                            @foreach (var item in Model.Cart.Items)
+                            {
+                                <tr>
+                                    <td>
+                                        <img src="@item.ImageUrl" style="height:70px;" />
+                                        <div>@item.Name  </div>
+                                    </td>
+                                    <td>@item.UnitPrice</td>
+                                   @*  <td>
+                                        <div class="def-number-input number-input safari_only mb-0 w-100" >
+                                            <div class="input-group mb-3" style="width: 50px;margin: auto;">
+
+                                                <input class="form-control sm-control text-center" size="2" min="0" name="quantity" value="@item.Quantity" readonly />
+                                            </div>
+                                        </div>
+                                    </td> *@
+                                    <td>@item.Quantity</td>
+                                    <td>@item.Total</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Cart Summary</h4>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered">
+                        <tr>
+                            <td>Total</td>
+                            <td> ₹@Model.Cart.Total.ToString("F2")</td>
+                        </tr>  
+                        <tr>
+                            <td>Tax (5%)</td>
+                            <td>₹@Model.Cart.Tax.ToString("F2")</td>
+                        </tr>
+                        <tr class="bg-dark text-white" style="border:1px solid #212529">
+                            <td>Grand Total</td>
+                            <th class="">₹@Model.Cart.GrandTotal.ToString("F2")</th>
+                        </tr>
+                    </table>
+
+
+                    <form asp-action="Status" asp-controller="Payment" id="PaymentForm" name="PaymentForm" method="post">
+                        <input type="hidden" name="Receipt" id="Receipt" value="@Model.Receipt" />
+                        <input type="hidden" name="Currency" id="Currency" value="@Model.Currency" />
+                        <input type="hidden" name="rzp_signature" id="rzp_signature" />
+                        <input type="hidden" name="rzp_paymentid" id="rzp_paymentid" />
+                        <input type="hidden" name="rzp_orderid" id="rzp_orderid" />
+                    </form>
+
+
+                    <a href="javascript:void(0)" id="rzp-button1" class="btn btn-primary">Pay Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  
+    var options = {
+        "key": "@Model.RazorpayKey", // Enter the Key ID generated from the Dashboard
+        "amount": "@Model.GrandTotal*100", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+        "currency": "@Model.Currency",
+        "name": "@Model.Name",
+        "description": "@Model.Description",
+        "order_id": "@Model.OrderId",
+        "image": "/images/logo.png",
+        "handler":function(response){
+                $('#rzp_paymentid').val(response.razorpay_payment_id);
+            $('#rzp_orderid').val(response.razorpay_order_id);
+            $("#rzp_signature").val(response.razorpay_signature);
+            $('#PaymentForm').submit();
+        },
+        "prefill": {
+            "name": "@CurrentUser.Name",
+            "email": "@CurrentUser.Email",
+            "contact": "@CurrentUser.Phone",
+        },
+        "notes": {
+            "address": "NA"
+        },
+        "theme": {
+            "color": "#3399cc"
+        }
+    };
+  
+    var rzp = new Razorpay(options);
+    document.getElementById('rzp-button1').onclick = function (e) {
+ 
+        rzp.open();
+        e.preventDefault();
+    }
+
+    window.onload=function(){
+        document.getElementById('rzp-button1').click();
+    }
+</script>
+
+
+
+
+
+
+@section scripts{
+ 
+}

@@ -1,0 +1,144 @@
+﻿@model ePizzaHub.UI.Areas.Admin.Models.AddOrEditItemVM
+
+@{
+    ViewData["Title"] = "Create";
+    string unitPrice;
+    string itemUrl;
+    string heading;
+    if (Model.Id == 0 || Model.Id == null)
+    {
+        itemUrl = "https://placehold.jp/150*150.png";
+        heading = "Create Item";
+        unitPrice = ""; 
+    }
+    else
+    {
+        itemUrl = Model.ImageUrl;
+        unitPrice = Model.UnitPrice.ToString();
+        heading = "Edit Item";
+    }
+}
+
+
+
+
+
+
+
+
+
+<div class="row ">
+    <div class="col-md-7 mt-5">
+        <img id="imgPreview" src="@itemUrl" style="width:100%; height:330px;" alt="Item Image" />
+    </div>
+    <div class="col-md-5 mt-2">
+       
+        <h3>@heading</h3>
+
+        <form asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-floating">
+
+                <input asp-for="Id" type="hidden" class="form-control" placeholder=""/>
+                <input asp-for="ImageUrl" type="hidden" class="form-control" />
+
+            </div>
+            <div class="form-floating mt-2">
+                <input asp-for="Name" class="form-control" placeholder="" />
+                <label asp-for="Name" class="control-label"></label>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-floating mt-2">
+                <input asp-for="Description" class="form-control" placeholder="" />
+                <label asp-for="Description" class="control-label"></label>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-floating mt-2">
+                <input asp-for="UnitPrice" value="@unitPrice" class="form-control" placeholder="" />
+                <label asp-for="UnitPrice" class="control-label"></label>
+                <span asp-validation-for="UnitPrice" class="text-danger"></span>
+            </div>
+            <div class="form-floating mt-2">
+              
+
+                <select asp-for="CategoryId" class="form-select" asp-items="@ViewBag.categories">
+                    <option>--Select Category --</option>
+                </select>
+                <label asp-for="CategoryId" class="control-label"></label>
+                <span asp-validation-for="CategoryId" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-3" style="display:flex;justify-content:space-evenly">
+                <label asp-for="ItemTypeId" class="control-label me-5"></label>:
+
+
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" asp-for="ItemTypeId" value="1" />
+                    <label class="form-check-label" for="inlineRadio1">Veg</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio"  asp-for="ItemTypeId" value="2" />
+                    <label class="form-check-label" for="inlineRadio2">Non Veg</label>
+                </div>
+                <span asp-validation-for="ItemTypeId" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-2">
+                <label asp-for="ImageFile" class="control-label"></label>
+
+                <input id="chooseImage" asp-for="ImageFile" class="form-control py-3" placeholder="" />
+                <span asp-validation-for="ImageFile" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-2">
+
+               
+                @if (Model.Id == 0 || Model.Id == null)
+                {
+                    <input type="submit" value="Create" class="btn btn-primary btn-lg float-end" />
+
+                }
+                else
+                {
+                    <input type="submit" value="Save" class="btn btn-warning btn-lg float-end px-4" />
+
+                }
+                <a asp-action="Index" class="btn btn-secondary  btn-lg float-end me-2">Back</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section scripts{
+    <script>
+        $("#chooseImage").change(function (e) {
+            $('#fileError').text("");
+
+            var url = $("#chooseImage").val();
+            var ext = url.substring(url.lastIndexOf('.') + 1).toLowerCase();
+            /*   var ext = this.value.match(/\.(.+)$/)[1];*/
+
+            if (ext == 'jpg' || ext == 'jpeg' || ext == 'png' || ext == 'gif') {
+                if (this.files[0].size > 2097152) {
+                    $('#fileError').text("Please upload file less than 2MB. Thanks!!");
+                    $(this).val('');
+                }
+                else {
+                    var reader = new FileReader();
+                    reader.onload = function () {
+                        var output = document.getElementById('imgPreview');
+                        output.src = reader.result;
+                    }
+                    reader.readAsDataURL(e.target.files[0]);
+                }
+            }
+            else {
+                $('#fileError').text("File format not supported");
+
+                this.value = '';
+            }
+
+
+        });
+    </script>
+}
+
+

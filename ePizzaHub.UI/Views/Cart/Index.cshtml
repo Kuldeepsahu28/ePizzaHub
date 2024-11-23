@@ -1,0 +1,220 @@
+﻿@model ePizzaHub.Models.CartModel
+@{
+    ViewData["Title"] = "Cart";
+}
+
+@*
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h3>Cart Details</h3>
+
+@if (Model != null && Model.Items.Count > 0)
+{
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Cart Items (@Model.Items.Count())</h4>
+                </div>
+                <div class="cart-body table-responsive">
+                    <table class="table table-hover">
+                        <thead class="text-center">
+                            <tr>
+                                <th>Details</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-center">
+                            @foreach (var item in Model.Items)
+                            {
+                                <tr>
+                                    <td>
+                                        <img src="@item.ImageUrl" style="height:70px;" width="180" />
+                                        <div>@item.Name</div>
+                                    </td>
+                                    <td>@item.UnitPrice</td>
+                                    <td>
+                                        <div class="def-number-input number-input safari_only mb-0 w-100">
+                                            <div class="input-group mb-3" style="width: 120px;margin: auto;">
+                                                <div class="input-group-prepend">
+                                                    <button onclick="updateQuantity('@item.ItemId','@item.Quantity',-1)" class="btn btn-outline-secondary" type="button">-</button>
+                                                </div>
+                                                <input class="form-control sm-control text-center" size="2" min="0" name="quantity" value="@item.Quantity" readonly />
+                                                <div class="input-group-prepend">
+                                                    <button onclick="updateQuantity('@item.ItemId','@item.Quantity',1)" class="btn btn-outline-secondary" type="button">+</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>@item.Total</td>
+                                    <td>
+
+                                        <!--Remove Button-->
+                                        <a href="javascript:void(0);" data-id="@item.ItemId" class="btn-delete"><i class="bi bi-trash text-danger"></i></a>
+                                        <!--     <button  onclick="deleteItem('@item.ItemId')" class=""><i class="bi bi-trash text-danger"></i></button> -->
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Cart Summary</h4>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered">
+                        <tr>
+                            <td>Total</td>
+                            <td> ₹@Model.Total.ToString("F2")</td>
+                        </tr>
+                        <tr>
+                            <td>Tax (5%)</td>
+                            <td>₹@Model.Tax.ToString("F2")</td>
+                        </tr>
+                        <tr class="bg-dark text-white" style="border:1px solid #212529">
+                            <td>Grand Total</td>
+                            <th class="">₹@Model.GrandTotal.ToString("F2")</th>
+                        </tr>
+                    </table>
+                    @if (CurrentUser == null)
+                    {
+                        <a asp-action="Login" asp-controller="Account" asp-route-returnUrl="/cart" class="btn btn-primary float-end">Checkout</a>
+                    }
+                    else
+                    {
+                        <a asp-action="CheckOut" asp-controller="Cart" asp-route-returnUrl="/cart" class="btn btn-success float-end">Checkout</a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div>
+        <h3>No Items in Cart <a class="link" asp-action="Index" asp-controller="Home">Add some items...</a></h3>
+    </div>
+}
+
+
+@section Scripts {
+    <script src="~/js/cart.js" asp-append-version="true"></script>
+
+    <script>
+        document.querySelectorAll('.btn-delete').forEach(button => {
+            button.addEventListener('click', function (event) {
+                event.preventDefault();
+                const itemId = this.getAttribute('data-id');
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // window.location.href = `/Employee/DeleteEmployee?id=${employeeId}`;
+                        deleteItem(itemId);
+                    }
+                })
+            });
+        });
+    </script>
+}
+
+
+ *@
+
+@if (Model != null && Model.Items.Count > 0)
+{
+
+    <div id="cart-main">
+        <h3>Cart Details</h3>
+
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Cart Items (<span id="cartItems"></span>)</h4>
+                    </div>
+                    <div class="cart-body table-responsive">
+                        <table id="cart-table" class="table table-hover">
+                            <thead class="text-center">
+                                <tr>
+                                    <th>Details</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Total</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-center">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Cart Summary</h4>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-bordered">
+                            <tr>
+                                <td>Total</td>
+                                <td>₹<span id="total"></span><!-- ₹@Model.Total.ToString("F2")--></td>
+                            </tr>
+                            <tr>
+                                <td>Tax (5%)</td>
+                                <td>₹<span id="tax"></span><!--₹@Model.Tax.ToString("F2")--></td>
+                            </tr>
+                            <tr class="bg-dark text-white" style="border:1px solid #212529">
+                                <td>Grand Total</td>
+                                <th class="">₹<span id="grandTotal"></span><!--₹@Model.GrandTotal.ToString("F2")--></th>
+                            </tr>
+                        </table>
+                        @if (CurrentUser == null)
+                        {
+                            <a asp-action="Login" asp-controller="Account" asp-route-returnUrl="/cart" class="btn btn-primary float-end">Checkout</a>
+                        }
+                        else
+                        {
+                            <a asp-action="CheckOut" asp-controller="Cart" asp-route-returnUrl="/cart" class="btn btn-success float-end">Checkout</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+}
+else
+{
+    <div>
+        <h3>No Items in Cart <a class="link" asp-action="Index" asp-controller="Home">Add some items...</a></h3>
+    </div>
+}
+
+
+@section Scripts {
+
+    <script src="~/js/cart.js"></script>
+
+
+
+}

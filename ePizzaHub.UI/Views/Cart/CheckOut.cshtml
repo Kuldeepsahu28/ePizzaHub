@@ -1,0 +1,105 @@
+﻿@model ePizzaHub.UI.Models.AddressViewModel
+
+@{
+    ViewData["Title"] = "CheckOut";
+}
+
+<h3>Delivery Address</h3>
+
+<div class="row">
+    <div class="col-md-6 border border-dark-subtle rounded border-2">
+        <h4>Pick Address here</h4>
+
+        <div class="accordion" id="accordionExample">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        Address #1
+                    </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <strong>Bhopal, </strong> 6, Ratnagiri, 484210 
+                        <button class="btn btn-dark float-end">Continue</button>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        Address #2
+                    </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <strong>Bhopal, </strong> 8, Arera Colony, 484211
+                        <button class="btn btn-dark float-end">Continue</button>
+
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                        Address #3
+                    </button>
+                </h2>
+                <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <strong>Bhopal, </strong> 5, Indrapuri, 484212
+                        <button class="btn btn-dark float-end">Continue</button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 ">
+        <h4> or Add New Address</h4>
+        <form asp-action="CheckOut">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <div class="row">
+                <div class="form-floating col-md-6 mt-2">
+                    <input asp-for="Street" class="form-control" placeholder="" />
+                    <label asp-for="Street" class="control-label ps-4"></label>
+
+                    <span asp-validation-for="Street" class="text-danger"></span>
+                </div>
+                <div class="form-floating col-md-6 mt-2">
+                    <input asp-for="ZipCode" class="form-control" placeholder="" />
+                    <label asp-for="ZipCode" class="control-label ps-4"></label>
+
+                    <span asp-validation-for="ZipCode" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-floating mt-2">
+                <input asp-for="Locality" class="form-control" placeholder="" />
+                <label asp-for="Locality" class="control-label"></label>
+
+                <span asp-validation-for="Locality" class="text-danger"></span>
+            </div>
+            <div class="form-floating mt-2">
+                <input asp-for="City" class="form-control" placeholder="" />
+                <label asp-for="City" class="control-label"></label>
+
+                <span asp-validation-for="City" class="text-danger"></span>
+            </div>
+            <div class="form-floating mt-2">
+                <input asp-for="PhoneNumber" class="form-control" placeholder="" />
+                <label asp-for="PhoneNumber" class="control-label"></label>
+
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-2 d-grid">
+                <input type="submit" value="Continue" class="btn btn-dark float-end py-3 mb-2" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section scripts{
+    <partial name="_ValidationScriptsPartial"/>
+    
+}
