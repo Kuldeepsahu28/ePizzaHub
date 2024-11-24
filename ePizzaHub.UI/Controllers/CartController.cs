@@ -81,8 +81,18 @@ namespace ePizzaHub.UI.Controllers
 
         public IActionResult CheckOut()
         {
+            CartModel cart = _cartService.GetCartDetails(CartId);
+            if (cart.Items.Count!=0)
+            {
+                return View();
+            }
+            else
+            {
+                TempData["warning"] = "Please add some Items!";
+                return RedirectToAction("Index", "Home");
 
-            return View();
+            }
+           
         }
 
         [HttpPost]
