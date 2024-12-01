@@ -3,6 +3,7 @@ using ePizzaHub.Services.Interfaces;
 using ePizzaHub.UI.Helpers;
 using ePizzaHub.UI.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 
 namespace ePizzaHub.UI.Controllers
 {
@@ -11,12 +12,16 @@ namespace ePizzaHub.UI.Controllers
         IPaymentService _paymentService;
         IOrderService _orderService;
         IConfiguration _configuration;
+        IEmailSenderService _emailSenderService;
+        IWebHostEnvironment _webHostEnvironment;
 
-        public PaymentController(IPaymentService paymentService, IConfiguration configuration, IOrderService orderService)
+        public PaymentController(IPaymentService paymentService, IConfiguration configuration, IOrderService orderService, IEmailSenderService emailSenderService, IWebHostEnvironment webHostEnvironment)
         {
             _paymentService = paymentService;
             _configuration = configuration;
             _orderService = orderService;
+            _emailSenderService = emailSenderService;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public IActionResult Index()
@@ -129,19 +134,61 @@ namespace ePizzaHub.UI.Controllers
 
         public IActionResult Receipt()
         {
-            PaymentDetailsModel model = TempData.Peek<PaymentDetailsModel>("PaymentDetails");
-            AddressViewModel addressViewModel = TempData.Peek<AddressViewModel>("Address");
-            CartModel cart = TempData.Peek<CartModel>("CartDetails");
-            TempData.Remove("CartId");
-            ReceiptViewModel receiptData = new ReceiptViewModel
+            try
             {
-                PaymentDetail = model,
-                Address = addressViewModel,
-                Items = cart.Items
-            };
-            return View(receiptData);
 
-          
+                PaymentDetailsModel model = TempData.Peek<PaymentDetailsModel>("PaymentDetails");
+                AddressViewModel addressViewModel = TempData.Peek<AddressViewModel>("Address");
+                CartModel cart = TempData.Peek<CartModel>("CartDetails");
+                TempData.Remove("CartId");
+                ReceiptViewModel receiptData = new ReceiptViewModel
+                {
+                    PaymentDetail = model,
+                    Address = addressViewModel,
+                    Items = cart.Items
+                };
+
+
+                // Sending Email
+                string path = Path.Combine(_webHostEnvironment.WebRootPath, "emailTemplates", "Receipt.html");
+                string htmlString = System.IO.File.ReadAllText(path);
+                           
+                htmlString = htmlString.Replace("{{Name}}", CurrentUser.Name);
+                htmlString = htmlString.Replace("{{Address}}", addressViewModel.Street + ", " + addressViewModel.Locality + ", " + addressViewModel.City);
+                htmlString = htmlString.Replace("{{Invoice Number}}", model.TransactionId);
+                htmlString = htmlString.Replace("{{Date}}", model.CreatedDate.ToString("dd/MMM/yyyy"));
+                htmlString = htmlString.Replace("{{SubTotal}}", "&#8377;" + model.Total.ToString());
+
+                htmlString = htmlString.Replace("{{Tax}}", "&#8377;" + model.Tax.ToString());
+                htmlString = htmlString.Replace("{{Grand Total}}", "&#8377;" + model.GrandTotal.ToString());
+
+                string items = "";
+                int sl = 1;
+                foreach (var item in cart.Items)
+                {
+                    string i = $"  <tr>\r\n                    " +
+                        $"<td style=\"padding: 10px; border-bottom: 1px solid #ddd;\">{sl}</td>\r\n  " +
+                        $" <td style=\"padding: 10px; border-bottom: 1px solid #ddd;\">{item.Name}</td>\r\n" +
+                        $" <td style=\"padding: 10px; border-bottom: 1px solid #ddd;\">&#8377;{item.UnitPrice}</td>\r\n" +
+                        $"<td style=\"padding: 10px; border-bottom: 1px solid #ddd;\">{item.Quantity}</td>\r\n " +
+                        $"<td style=\"padding: 10px; border-bottom: 1px solid #ddd;\">&#8377;{item.Total}</td>\r\n " +
+                        $" </tr>";
+                    items = items + i;
+                    sl++;
+                }
+                htmlString = htmlString.Replace("{{Items}}", items);
+
+                _emailSenderService.EmailSend(CurrentUser.Email, "Receipt", htmlString);
+
+
+                return View(receiptData);
+            }
+            catch (Exception ex)
+            {
+                return View("Error", new ErrorViewModel { RequestId = ex.Message });
+            }
+
+
         }
     }
 }

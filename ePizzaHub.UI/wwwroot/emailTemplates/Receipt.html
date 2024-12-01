@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f9f9f9;">
+
+
+
+
+
+    <div style="max-width: 700px; margin: 0 auto; background: #ffffff; border: 1px solid #ddd; padding: 20px; color: #333;">
+
+        <!-- Header Section -->
+        <div style="border-bottom: 2px solid #eee; padding-bottom: 15px; background-image: url(https://st4.depositphotos.com/11169808/22933/i/450/depositphotos_229330324-stock-photo-tasty-pepperoni-pizza-cooking-ingredients.jpg); background-size: cover; background-repeat: no-repeat; height: 270px; width: 100%; text-align: center; box-sizing: border-box;">
+           
+        </div>
+
+
+        <!-- Invoice Details -->
+        <div style="margin-top: 20px;display: flex;justify-content: space-around;">
+            <div style="margin-right:30px;">
+                <p style="margin:0;"><strong>Invoice To:</strong> </p>
+            </div>
+            <div style="margin-right:30px;">
+                <span>{{Name}}</span><br>
+                <span>{{Address}}</span>
+            </div>
+
+            <div style="margin-right:30px;">
+                <p style="margin:0;"><strong>Invoice#:</strong> {{Invoice Number}}</p>
+                <p style="margin:0;"><strong>Date:</strong> {{Date}}</p>
+            </div>
+
+
+
+        </div>
+        <!-- Items Table -->
+        <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+            <thead>
+                <tr>
+                    <th style="padding: 10px; text-align: left; background: #333; color: #fff; border: 1px solid #333;">SL</th>
+                    <th style="padding: 10px; text-align: left; background: #333; color: #fff; border: 1px solid #333;">Item Description</th>
+                    <th style="padding: 10px; text-align: left; background: #333; color: #fff; border: 1px solid #333;">Price</th>
+                    <th style="padding: 10px; text-align: left; background: #333; color: #fff; border: 1px solid #333;">Qty.</th>
+                    <th style="padding: 10px; text-align: left; background: #333; color: #fff; border: 1px solid #333;">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{Items}}
+                <!-- Add more rows as needed -->
+
+
+            </tbody>
+        </table>
+        <!-- Total Section -->
+        <div style="margin-top: 20px;display: flex;justify-content: space-around;">
+            <div style="margin-top: 30px; font-size: 20px; color: #777; text-align: center;margin-right:100px;">
+                <p style="margin: 5px 0;">Thank you for choosing ePizzaHub!</p>
+
+            </div>
+            <div>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tbody>
+                        <tr>
+                            <th style="padding: 10px; text-align: right;  ">Subtotal:</th>
+                            <td style="padding: 10px; ">{{SubTotal}}</td>
+                        </tr>
+                        <tr>
+                            <th style="padding: 10px; text-align: right; ">Tax:</th>
+                            <td style="padding: 10px; ">{{Tax}}</td>
+                        </tr>
+                        <tr>
+                            <th style="padding: 10px; text-align: right; background: hsl(45, 100%, 64%); border: 1px solid hsl(45, 100%, 64%);">Total:</th>
+                            <td style="padding: 10px; border: 1px solid hsl(45, 100%, 64%);background: hsl(45, 100%, 64%); font-size: 20px; font-weight: bold; color: #333;">{{Grand Total}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Footer Section -->
+
+    </div>
+</body>
+</html>

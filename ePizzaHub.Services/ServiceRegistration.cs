@@ -51,6 +51,7 @@ options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IUtilityService, UtilityService>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IEmailSenderService, EmailSenderService>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
       
