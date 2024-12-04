@@ -114,10 +114,21 @@ namespace ePizzaHub.UI.Controllers
         {
             if (ModelState.IsValid)
             {
-                var mappedData = _mapper.Map<User>(vm);
-                _authService.CreateUser(mappedData, "User");
-                ModelState.Clear();
-                return RedirectToAction("Login");
+                var user = _authService.GetByEmailId(vm.Email);
+                if (user==null)
+                {
+                    var mappedData = _mapper.Map<User>(vm);
+                    _authService.CreateUser(mappedData, "User");
+                    ModelState.Clear();
+                    TempData["warning"] = "You are registered successfully";
+                    return RedirectToAction("Login");
+                }
+                else
+                {
+                    TempData["warning"] = "You are already registered!";
+                    return RedirectToAction("Login");
+                }
+
             }
             return View();
         }
