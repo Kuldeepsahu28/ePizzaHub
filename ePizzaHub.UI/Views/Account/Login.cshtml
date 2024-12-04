@@ -9,19 +9,22 @@
         <form asp-action="Login" asp-route-returnUrl="@Context.Request.Query["returnUrl"]">
             <div asp-validation-summary="All" class="text-danger"></div>
             <div class="form-floating mt-2">
-                <input asp-for="Email" class="form-control" placeholder=""/>
+                <input asp-for="Email" class="form-control" placeholder="" />
                 <label asp-for="Email" class="control-label"></label>
 
-@*                 <span asp-validation-for="Email" class="text-danger"></span>
- *@            </div>
+                @*                 <span asp-validation-for="Email" class="text-danger"></span>
+                *@
+            </div>
             <div class="form-floating mt-2">
-                <input asp-for="Password" class="form-control" placeholder=""/>
+                <input asp-for="Password" class="form-control" placeholder="" />
                 <label asp-for="Password" class="control-label"></label>
 
-@*                 <span asp-validation-for="Password" class="text-danger"></span>
- *@             
+                @*                 <span asp-validation-for="Password" class="text-danger"></span>
+                *@
             </div>
-           
+            <div>
+                <a asp-action="ForgotPassword" asp-controller="Account" asp-area="" style="text-decoration:none;"><i>Forgot Password</i></a>
+            </div>
             <div class="form-group d-grid mt-2">
                 <input style="font-size:x-large;" type="submit" value="Login" class="btn btn-dark btn-block btn-lg py-2" />
                 <p>Don't have an account? <a asp-action="Signup" asp-controller="Account">Create an account here</a></p>
@@ -34,6 +37,6 @@
 
 @section scripts {
     <partial name="_ValidationScriptsPartial" />
-    
+
 
 }

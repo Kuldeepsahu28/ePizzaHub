@@ -159,8 +159,8 @@ namespace ePizzaHub.UI.Controllers
                 htmlString = htmlString.Replace("{{Date}}", model.CreatedDate.ToString("dd/MMM/yyyy"));
                 htmlString = htmlString.Replace("{{SubTotal}}", "&#8377;" + model.Total.ToString());
 
-                htmlString = htmlString.Replace("{{Tax}}", "&#8377;" + model.Tax.ToString());
-                htmlString = htmlString.Replace("{{Grand Total}}", "&#8377;" + model.GrandTotal.ToString());
+                htmlString = htmlString.Replace("{{Tax}}", "&#8377;" + model.Tax.ToString("F2"));
+                htmlString = htmlString.Replace("{{Grand Total}}", "&#8377;" + model.GrandTotal.ToString("F2"));
 
                 string items = "";
                 int sl = 1;
@@ -169,9 +169,9 @@ namespace ePizzaHub.UI.Controllers
                     string i = $"  <tr>\r\n                    " +
                         $"<td style=\"padding: 10px; border-bottom: 1px solid #ddd;\">{sl}</td>\r\n  " +
                         $" <td style=\"padding: 10px; border-bottom: 1px solid #ddd;\">{item.Name}</td>\r\n" +
-                        $" <td style=\"padding: 10px; border-bottom: 1px solid #ddd;\">&#8377;{item.UnitPrice}</td>\r\n" +
+                        $" <td style=\"padding: 10px; border-bottom: 1px solid #ddd;\">&#8377;{item.UnitPrice.ToString("F2")}</td>\r\n" +
                         $"<td style=\"padding: 10px; border-bottom: 1px solid #ddd;\">{item.Quantity}</td>\r\n " +
-                        $"<td style=\"padding: 10px; border-bottom: 1px solid #ddd;\">&#8377;{item.Total}</td>\r\n " +
+                        $"<td style=\"padding: 10px; border-bottom: 1px solid #ddd;\">&#8377;{item.Total.ToString("F2")}</td>\r\n " +
                         $" </tr>";
                     items = items + i;
                     sl++;

@@ -1,14 +1,12 @@
 ﻿using ePizzaHub.Services.Interfaces;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+
 using System.Net.Mail;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+
 using ePizzaHub.Models;
+using System.Security.Cryptography;
 
 namespace ePizzaHub.Services.Implementations
 {
@@ -64,15 +62,22 @@ namespace ePizzaHub.Services.Implementations
             return status;
         }
 
-        public string GetEmailBody(string email,string Template,string Title)
+        public string GenerateOtp(int length=6)
         {
-            //string url = _configuration.GetValue<string>("Urls:LoginUrl");
-            string path = Path.Combine(_webHostEnvironment.WebRootPath, "EmailTemplates/"+Template);
-            string htmlString = System.IO.File.ReadAllText(path);
-            htmlString = htmlString.Replace("{{title}}",Title);
-            htmlString = htmlString.Replace("{{Username}}", email);
-            //htmlString = htmlString.Replace("{{url}}", url);
-            return htmlString;
+            if (length <= 0)
+                return null;
+
+            byte[] data = new byte[length];
+            RandomNumberGenerator.Fill(data); // Fill the byte array with cryptographically strong random values.
+
+            var otp = string.Empty;
+            foreach (var b in data)
+            {
+                otp += (b % 10).ToString(); // Convert each byte to a single digit.
+            }
+
+            return otp.Substring(0, length); // Ensure the OTP is exactly the required length.
         }
+
     }
 }

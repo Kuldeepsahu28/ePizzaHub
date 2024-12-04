@@ -12,9 +12,13 @@ namespace ePizzaHub.UI.Helpers
         {
             if (context.HttpContext.User.Identity.IsAuthenticated)
             {
-                if (!context.HttpContext.User.IsInRole(Roles))
+
+                if (!string.IsNullOrEmpty(Roles))
                 {
-                    context.Result = new RedirectToActionResult("AccessDenied", "Account", new { area = "" });
+                    if (!context.HttpContext.User.IsInRole(Roles))
+                    {
+                        context.Result = new RedirectToActionResult("AccessDenied", "Account", new { area = "" });
+                    }
                 }
             }
             else

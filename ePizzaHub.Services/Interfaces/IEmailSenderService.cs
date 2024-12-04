@@ -10,6 +10,6 @@ namespace ePizzaHub.Services.Interfaces
     {
         Task<bool> EmailSend(string email, string subject, string message);
 
-        string GetEmailBody(string email, string Template, string Title);
+        string GenerateOtp(int length = 6);
     }
 }
