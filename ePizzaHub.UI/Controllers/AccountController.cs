@@ -120,7 +120,7 @@ namespace ePizzaHub.UI.Controllers
                     var mappedData = _mapper.Map<User>(vm);
                     _authService.CreateUser(mappedData, "User");
                     ModelState.Clear();
-                    TempData["warning"] = "You are registered successfully";
+                    TempData["success"] = "You are registered successfully";
                     return RedirectToAction("Login");
                 }
                 else
