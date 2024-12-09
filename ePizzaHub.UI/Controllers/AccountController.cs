@@ -103,14 +103,14 @@ namespace ePizzaHub.UI.Controllers
         }
 
 
-        public IActionResult Signup()
+        public IActionResult Signup(string? returnUrl)
         {
             return View();
         }
 
 
         [HttpPost]
-        public IActionResult Signup(SignupViewModel vm)
+        public IActionResult Signup(SignupViewModel vm,string? returnUrl)
         {
             if (ModelState.IsValid)
             {
@@ -121,7 +121,7 @@ namespace ePizzaHub.UI.Controllers
                     _authService.CreateUser(mappedData, "User");
                     ModelState.Clear();
                     TempData["success"] = "You are registered successfully";
-                    return RedirectToAction("Login");
+                    return RedirectToAction("Login", new {returnUrl=returnUrl});
                 }
                 else
                 {
@@ -155,6 +155,7 @@ namespace ePizzaHub.UI.Controllers
                     string htmlString = System.IO.File.ReadAllText(path);
 
                     htmlString = htmlString.Replace("{{reset_link}}", resetLink);
+                    htmlString = htmlString.Replace("{{name}}", user.Name);
                     _emailSenderService.EmailSend(email, "Reset Password", htmlString);
 
                     ViewData["sentLink"] = "A reset password link has been sent to your email address.";

@@ -1,12 +1,8 @@
-using ePizzaHub.Core;
-using ePizzaHub.Repositories.Interfaces;
-using ePizzaHub.Repositories.Implementations;
-using Microsoft.EntityFrameworkCore;
-using ePizzaHub.Core.Entities;
-using ePizzaHub.Services.Interfaces;
-using ePizzaHub.Services.Implementations;
+
 using Microsoft.AspNetCore.Authentication.Cookies;
 using ePizzaHub.Services;
+using WebMarkupMin.AspNetCore8;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,13 +10,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient();
 
+
+
+
+
+
 // Services
-ServiceRegistration.RegisterServices(builder.Services,builder.Configuration);
+ServiceRegistration.RegisterServices(builder.Services, builder.Configuration);
 
-
-
-
-
+// Authentication
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -29,6 +27,30 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.SlidingExpiration = true;
         options.AccessDeniedPath = "/Account/AccessDenied";
     });
+
+
+// HTML Minification
+builder.Services.AddWebMarkupMin(options =>
+{
+    options.AllowMinificationInDevelopmentEnvironment = true;
+    options.AllowCompressionInDevelopmentEnvironment = true;
+    options.DisablePoweredByHttpHeaders = true;
+})
+    .AddHtmlMinification(options =>
+    {
+        options.MinificationSettings.RemoveRedundantAttributes = true;
+        options.MinificationSettings.MinifyInlineJsCode = true;
+        options.MinificationSettings.MinifyInlineCssCode = true;
+        options.MinificationSettings.MinifyEmbeddedJsonData = true;
+        options.MinificationSettings.MinifyEmbeddedCssCode = true;
+    })
+    .AddHttpCompression();
+
+
+// loging
+builder.Host.UseSerilog((ctx, lc) =>
+lc.ReadFrom.Configuration(ctx.Configuration));
+
 
 var app = builder.Build();
 
@@ -40,8 +62,19 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.UseWebMarkupMin();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+//app.UseStaticFiles(new StaticFileOptions
+//{
+//    OnPrepareResponse = ctx =>
+//    {
+//        //const int durationInSeconds = 60 * 60 * 24 * 7; //Secs*Mins*Hrs*Days
+//        const int durationInSeconds = 60 * 10; //Secs*Mins*Hrs*Days
+//        ctx.Context.Response.Headers["cache-control"] =
+//        "public, max-age=" + durationInSeconds;
+//    }
+//});
 
 app.UseRouting();
 

@@ -5,12 +5,12 @@
 }
 
 <div class="row">
-    <div class="col-md-7 col-sm-6" style="height:410px;">
+    <div class="col-lg-6 col-md-5 col-sm-6" style="height:410px;">
         <img src="/images/Signup.png" height="100%" width="100%"/>
     </div>
-    <div class="col-md-5 col-sm-6">
-        <h4 class="mt-3">Create account here</h4>
-        <form asp-action="Signup">
+    <div class="col-lg-6 col-md-7 col-sm-6">
+        <h2 class="mt-3">Create an account here</h2>
+        <form asp-action="Signup" asp-route-returnUrl="@Context.Request.Query["returnUrl"]">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
            <div class="row">
                 <div class="form-floating col-md-6 mt-2">

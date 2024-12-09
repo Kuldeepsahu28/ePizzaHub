@@ -144,8 +144,8 @@ else
         <h3>Cart Details</h3>
 
         <div class="row">
-            <div class="col-md-8">
-                <div class="card">
+            <div class="col-md-8 ">
+                <div class="card mb-3">
                     <div class="card-header">
                         <h4>Cart Items (<span id="cartItems"></span>)</h4>
                     </div>
@@ -167,7 +167,7 @@ else
                 </div>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-4 mb-2">
                 <div class="card">
                     <div class="card-header">
                         <h4>Cart Summary</h4>
@@ -202,6 +202,18 @@ else
 
     </div>
 
+
+    @section Scripts {
+
+         <script src="~/js/cart.js" asp-append-version="true"></script>
+          <script>
+              $(document).ready(function () {
+                  GetCartData();
+                  SwalFire();
+              });
+         </script>
+
+    }
 }
 else
 {
@@ -210,11 +222,3 @@ else
     </div>
 }
 
-
-@section Scripts {
-
-    <script src="~/js/cart.js"></script>
-
-
-
-}

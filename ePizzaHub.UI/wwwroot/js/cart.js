@@ -1,46 +1,51 @@
-﻿function AddToCart(ItemId, Name, UnitPrice, Quantity) {
-    
+﻿function AddToCart(btn, ItemId, Name, UnitPrice, Quantity) {
+    debugger
+    $(".loader").css("visibility", "visible");
+    let btnId = $(btn).attr("id");
+    console.log(btnId);
     $.ajax({
         type: "GET",
         url: "/Cart/AddToCart/" + ItemId + "/" + UnitPrice + "/" + Quantity,
         success: function (res) {
             if (res.status == "success") {
-                
+
+
                 $("#cartCounter").text(res.count);
-             
+
+
                 ToastSuccess('Item Added to Cart Successfully');
-                location.reload();
+                $(btn).replaceWith(`
+                                              <div Id="replace-${ItemId}" class="def-number-input number-input safari_only mb-0 w-100;">
+                                             <div class="input-group mb-3" style="width: 120px;margin: auto;">
+                                                 <div class="input-group-prepend">
+                                                  
+                                                     <button onclick="updateQuantity(${ItemId},1,-1)" class="btn btn-outline-secondary" type="button" style="padding:6px 10px;"><i class="bi bi-dash-lg"></i></button>
+                                                 </div>
+                                                 <input Id="qtyInpt-${ItemId}" class="form-control sm-control text-center" size="2" min="0" name="quantity" value="1" readonly />
+                                                 <div class="input-group-prepend">
+                                                     
+                                                     <button onclick="updateQuantity(${ItemId},1,1)" class="btn btn-outline-secondary" type="button" style="padding:6px 10px;"><i class="bi bi-plus-lg"></i></button>
+                                                 </div>
+                                             </div>
+                                         </div>
+                                      `);
+                $("#cartCounter2").text(res.count);
+                $(".loader").css("visibility", "hidden");
+                $("#view-cart").css("display", "block");
             }
         }
     });
 }
 
 
-$(document).ready(function () {
-    
-    GetCartData();
-    RefereshCartQuantity();
-    SwalFire();
-});
 
-function RefereshCartQuantity() {
-    $.ajax({
-        type: "GET",
-        contentType: "application/json; charset=utf-8",
-        url: '/Cart/GetCartCount',
-        success: function (data) {
-            $("#cartCounter").text(data);
-        },
-        error: function (result) {
-        },
-    });
-}
+
 
 function SwalFire() {
     $(document).on('click', '.btn-delete', function (event) {
         event.preventDefault();
         const itemId = $(this).data('id'); // Use jQuery's .data() method
-        
+
         Swal.fire({
             title: "Are you sure?",
             text: "You won't be able to revert this!",
@@ -59,6 +64,12 @@ function SwalFire() {
 
 function updateQuantity(ItemId, currentQuantity, quantity) {
     
+
+    $(".loader").css("visibility", "visible");
+    let qntInptId = "#qtyInpt-" + ItemId;
+    let tQuantity = currentQuantity + quantity;
+    let replaceId = "#replace-" + ItemId;
+
     if ((currentQuantity >= 1 && quantity == 1) || (currentQuantity > 1 && quantity == -1)) {
         $.ajax({
             url: 'Cart/UpdateQuantity/' + ItemId + "/" + quantity,
@@ -70,14 +81,40 @@ function updateQuantity(ItemId, currentQuantity, quantity) {
                         GetCartData();
                     }
                     else {
-                        window.location.reload();
+                        //window.location.reload();
+                        console.log(qntInptId);
+                        $(qntInptId).val(tQuantity);
+
+
+                        $(replaceId).replaceWith(`
+      <div Id="replace-${ItemId}" class="def-number-input number-input safari_only mb-0 w-100;">
+     <div class="input-group mb-3" style="width: 120px;margin: auto;">
+         <div class="input-group-prepend">
+
+             <button onclick="updateQuantity(${ItemId},${tQuantity},-1)" class="btn btn-outline-secondary" type="button" style="padding:6px 10px;"><i class="bi bi-dash-lg"></i></button>
+         </div>
+         <input Id="qtyInpt-${ItemId}" class="form-control sm-control text-center" size="2" min="0" name="quantity" value="${tQuantity}" readonly />
+         <div class="input-group-prepend">
+             
+             <button onclick="updateQuantity(${ItemId},${tQuantity},1)" class="btn btn-outline-secondary" type="button" style="padding:6px 10px;"><i class="bi bi-plus-lg"></i></button>
+         </div>
+     </div>
+ </div>
+    `);
+
                     }
 
-                   
+                  
                 }
+
+                $(".loader").css("visibility", "hidden");
             }
         });
     }
+    else {
+        $(".loader").css("visibility", "hidden");
+    }
+
 }
 
 
@@ -85,30 +122,31 @@ function updateQuantity(ItemId, currentQuantity, quantity) {
 function deleteItem(ItemId) {
 
     if (ItemId > 0) {
-     /*   if (confirm("Are you sure! You want to delete this item? ")) {*/
-            $.ajax({
-                type: "GET",
-                url: '/Cart/DeleteItem/' + ItemId,
-                success: function (response) {
-                    if (response > 0) {
-                        GetCartData();
-                        RefereshCartQuantity();
-                        ToastSuccess('Item removed from cart successfully.')
-                    }
+        /*   if (confirm("Are you sure! You want to delete this item? ")) {*/
+        $.ajax({
+            type: "GET",
+            url: '/Cart/DeleteItem/' + ItemId,
+            success: function (response) {
+                if (response > 0) {
+                    GetCartData();
+                    RefereshCartQuantity();
+                    ToastSuccess('Item removed from cart successfully.')
                 }
-            });
+            }
+        });
         /*}*/
     }
 }
 
 
 function GetCartData() {
-
+    
+    $(".loader").css("visibility", "visible");
     $.ajax({
         url: '/Cart/GetCartDetails',
         type: 'get',
         success: function (response) {
-            
+
             let id = response.id;
             let userId = response.userId;
             let total = response.total;
@@ -129,49 +167,54 @@ function GetCartData() {
             tableBody.html('');
 
             $.each(items, function (i, item) {
+
                 let row = `
-                                         <tr>
-                                            <td>
-                                                <img src="${item.imageUrl}" style="height:70px;" width="180" />
-                                                <div>${item.name}</div>
-                                            </td>
-                                            <td>${item.unitPrice}</td>
-                                            <td>
-                                                <div class="def-number-input number-input safari_only mb-0 w-100">
-                                                    <div class="input-group mb-3" style="width: 120px;margin: auto;">
-                                                        <div class="input-group-prepend">
-                                                            <button onclick="updateQuantity('${item.itemId}','${item.quantity}',-1)" class="btn btn-outline-secondary" type="button">-</button>
-                                                        </div>
-                                                        <input class="form-control sm-control text-center" size="2" min="0" name="quantity" value="${item.quantity}" readonly />
-                                                        <div class="input-group-prepend">
-                                                            <button onclick="updateQuantity('${item.itemId}','${item.quantity}',1)" class="btn btn-outline-secondary" type="button">+</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>${item.total}</td>
-                                            <td>
-
-                                                <!--Remove Button-->
-                                                <a href="javascript:void(0);" data-id="${item.itemId}" class="btn-delete"><i class="bi bi-trash text-danger"></i></a>
-                                                <!--     <button onclick="deleteItem('${item.itemId}')" class=""><i class="bi bi-trash text-danger"></i></button> -->
-                                            </td>
-                                        </tr>
-                            `;
-
-
-
-
+                <tr>
+                         <td>
+                                 <img class="cartItemImg" src="${item.imageUrl}" />
+                                  <div>${item.name}</div>
+                       </td>
+                       <td>${item.unitPrice}</td>
+                       <td>
+                           <div class="def-number-input number-input safari_only mb-0 w-100 ">
+                               <div class="input-group mb-3 cartItemQty" style="margin: auto;">
+                                   <div class="input-group-prepend">
+                                       <button onclick="updateQuantity('${item.itemId}','${item.quantity}',-1)" class="btn btn-outline-secondary" type="button">-</button>
+                                   </div>
+                                   <input class="form-control sm-control text-center" size="2" min="0" name="quantity" value="${item.quantity}" readonly />
+                                   <div class="input-group-prepend">
+                                       <button onclick="updateQuantity('${item.itemId}','${item.quantity}',1)" class="btn btn-outline-secondary" type="button">+</button>
+                                   </div>
+                               </div>
+                           </div>
+                       </td>
+                       <td>${item.total}</td>
+                       <td>
+                           <a href="javascript:void(0);" data-id="${item.itemId}" class="btn-delete">
+                               <i class="bi bi-trash text-danger"></i>
+                           </a>
+                       </td>
+                 </tr>
+                        `;
                 tableBody.append(row);
             });
 
-
+            $("#loader").css("visibility", "hidden");
+        },
+        error: function(error){
+            $("#loader").css("visibility", "hidden");
         }
+       
+
+
+
+
     })
+
 }
 
 function ToastSuccess(msg) {
-    
+
     toastr.success(msg, 'Success', {
         ProgressEvent: true,
         positionClass: 'toast-top-right',

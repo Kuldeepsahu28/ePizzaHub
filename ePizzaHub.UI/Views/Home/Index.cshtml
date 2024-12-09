@@ -26,14 +26,14 @@
 </div>
 
 <div class="container pt-3" id="items">
-    <h1 class="mb-3">Pizaa, Beverages</h1>
+    <h1 class="mb-3">Pizza, Dessert, Beverages</h1>
     <div class="row">
         @foreach (var item in Model)
         {
             a = 0;
-            <div class="col-md-4 mb-3">
+            <div class="col-md-6 col-lg-4 mb-3">
                 <div class="card">
-                    <img src="@item.ImageUrl" class="card-img-top" height="137">
+                    <img src="@item.ImageUrl" class="card-img-top" height="180">
                     <div class="card-body">
                         <h5 class="card-title">
                             @item.Name
@@ -43,42 +43,43 @@
                         <div>
                             <span>Size: Regular</span>
 
-                            @if(cartDetails!=null){
-                                
-                            
-
-                            @foreach (var cartItem in cartDetails.Items)
+                            @if (cartDetails != null)
                             {
-                                if (cartItem.ItemId == item.Id)
-                                {
-                                    <div class="float-end" style="height:37px;">
 
-                                        <div class="def-number-input number-input safari_only mb-0 w-100;">
-                                            <div class="input-group mb-3" style="width: 120px;margin: auto;">
-                                                <div class="input-group-prepend">
-                                                    @* + *@
-                                                        <button onclick="updateQuantity('@cartItem.ItemId','@cartItem.Quantity',-1)" class="btn btn-outline-secondary" type="button" style="padding:6px 10px;"><i class="bi bi-dash-lg"></i></button>
-                                                </div>
-                                                <input class="form-control sm-control text-center" size="2" min="0" name="quantity" value="@cartItem.Quantity" readonly />
-                                                <div class="input-group-prepend">
-                                                    @* - *@
-                                                        <button onclick="updateQuantity('@cartItem.ItemId','@cartItem.Quantity',1)" class="btn btn-outline-secondary" type="button" style="padding:6px 10px;"><i class="bi bi-plus-lg"></i></button>
+
+
+                                @foreach (var cartItem in cartDetails.Items)
+                                {
+                                    if (cartItem.ItemId == item.Id)
+                                    {
+                                        <div class="float-end" style="height:37px;">
+
+                                            <div id="replace-@cartItem.ItemId" class="def-number-input number-input safari_only mb-0 w-100;">
+                                                <div class="input-group mb-3" style="width: 120px;margin: auto;">
+                                                    <div class="input-group-prepend">
+                                                        @* + *@
+                                                        <button onclick="updateQuantity(@cartItem.ItemId,@cartItem.Quantity,-1)" class="btn btn-outline-secondary" type="button" style="padding:6px 10px;"><i class="bi bi-dash-lg"></i></button>
+                                                    </div>
+                                                    <input Id="qtyInpt-@cartItem.ItemId" class="form-control sm-control text-center" size="2" min="0" name="quantity" value="@cartItem.Quantity" readonly />
+                                                    <div class="input-group-prepend">
+                                                        @* - *@
+                                                        <button onclick="updateQuantity(@cartItem.ItemId,@cartItem.Quantity,1)" class="btn btn-outline-secondary" type="button" style="padding:6px 10px;"><i class="bi bi-plus-lg"></i></button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    a = 1;
-                                    break;
+                                        a = 1;
+                                        break;
+                                    }
+
+
                                 }
-                              
-                             
-                            }
 
                             }
                             @if (a == 0)
                             {
-                                <div class="float-end">
-                                    <button onclick="AddToCart('@item.Id','@item.Name','@item.UnitPrice',1)" class="btn btn-primary">Add to Cart</button>
+                                <div id="addToCartBtn-@item.Id" class="float-end">
+                                    <button onclick="AddToCart(this,'@item.Id','@item.Name','@item.UnitPrice',1)" class="btn btn-primary">Add to Cart</button>
                                 </div>
                             }
 
@@ -91,7 +92,12 @@
     </div>
 </div>
 
+    <partial name="_ViewCart" />
+
+
+
 
 @section Scripts {
-    <script src="~/js/cart.js"></script>
+
+    <script src="~/js/cart.js" asp-append-version=true></script>
 }

@@ -22,7 +22,7 @@ body {
 }
 
 
-#cartCounter {
+#cartCounter,#cartCounter2 {
     background-color: #ec5252;
     border-radius: 4px;
     color: #ffffff;

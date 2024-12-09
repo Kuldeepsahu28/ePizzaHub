@@ -15,6 +15,8 @@ namespace ePizzaHub.UI.Areas.Admin.Mappers
         public ItemMapper()
         {
             CreateMap<AddOrEditItemVM, AddOrEditItemModel>().ReverseMap();
+            CreateMap<ItemVM, ItemAPIModel>().ReverseMap();
+            CreateMap<AddOrEditItemVM, Item>().ReverseMap();
         }
     }
 }
