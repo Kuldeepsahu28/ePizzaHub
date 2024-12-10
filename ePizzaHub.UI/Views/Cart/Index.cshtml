@@ -189,11 +189,11 @@ else
                         </table>
                         @if (CurrentUser == null)
                         {
-                            <a asp-action="Login" asp-controller="Account" asp-route-returnUrl="/cart" class="btn btn-primary float-end">Checkout</a>
+                            <a id="checkoutBtn" asp-action="Login" asp-controller="Account" asp-route-returnUrl="/cart" class="btn btn-primary float-end">Checkout</a>
                         }
                         else
                         {
-                            <a asp-action="CheckOut" asp-controller="Cart" asp-route-returnUrl="/cart" class="btn btn-success float-end">Checkout</a>
+                            <a id="checkoutBtn" asp-action="CheckOut" asp-controller="Cart" asp-route-returnUrl="/cart" class="btn btn-success float-end">Checkout</a>
                         }
                     </div>
                 </div>

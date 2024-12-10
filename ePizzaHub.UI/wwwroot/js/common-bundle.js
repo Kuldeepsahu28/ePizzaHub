@@ -31,6 +31,13 @@ function RefereshCartQuantity() {
 }
 
 
+window.addEventListener("pageshow", function (event) {
+    if (event.persisted) {
+        location.reload(); // Force a page reload if loaded from the cache
+    }
+});
+
+
 function ToastSuccess(msg) {
     debugger
     toastr.success(msg, 'Success', {

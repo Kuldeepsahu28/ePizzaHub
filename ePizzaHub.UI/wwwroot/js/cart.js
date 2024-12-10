@@ -140,6 +140,7 @@ function deleteItem(ItemId) {
 
 
 function GetCartData() {
+    debugger
     
     $(".loader").css("visibility", "visible");
     $.ajax({
@@ -154,21 +155,24 @@ function GetCartData() {
             let grandTotal = response.grandTotal;
             let createdDate = new Date(response.createdDate);
             let items = response.items;
-
-            $('#total').text(total);
-            $('#tax').text(tax);
-            $('#grandTotal').text(grandTotal);
-            $('#cartItems').text(items.length);
-
-            // $('#cart-table').html('');
+            console.log(items.length);
 
             let tableBody = $('#cart-table tbody');
             tableBody.empty();
             tableBody.html('');
+            if (items.length > 0) {
+                $('#total').text(total);
+                $('#tax').text(tax);
+                $('#grandTotal').text(grandTotal);
+                $('#cartItems').text(items.length);
 
-            $.each(items, function (i, item) {
+                // $('#cart-table').html('');
 
-                let row = `
+              
+
+                $.each(items, function (i, item) {
+
+                    let row = `
                 <tr>
                          <td>
                                  <img class="cartItemImg" src="${item.imageUrl}" />
@@ -196,10 +200,22 @@ function GetCartData() {
                        </td>
                  </tr>
                         `;
+                    tableBody.append(row);
+                });
+
+             
+            }
+            else
+            {
+                let row = `<tr><td colspan="5">No items in cart. <a href="/Home/Index" >Add some items...</a></tr>`;
+
                 tableBody.append(row);
-            });
+                $('#checkoutBtn').remove();
+            }
 
             $("#loader").css("visibility", "hidden");
+
+          
         },
         error: function(error){
             $("#loader").css("visibility", "hidden");
