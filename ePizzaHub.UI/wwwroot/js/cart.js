@@ -160,11 +160,12 @@ function GetCartData() {
             let tableBody = $('#cart-table tbody');
             tableBody.empty();
             tableBody.html('');
+            $('#total').text(total);
+            $('#tax').text(tax);
+            $('#grandTotal').text(grandTotal);
+            $('#cartItems').text(items.length);
             if (items.length > 0) {
-                $('#total').text(total);
-                $('#tax').text(tax);
-                $('#grandTotal').text(grandTotal);
-                $('#cartItems').text(items.length);
+              
 
                 // $('#cart-table').html('');
 

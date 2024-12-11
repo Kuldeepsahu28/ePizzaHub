@@ -33,23 +33,25 @@
                 width:100px;
             }
         }    
-        @@media (max-width: 991px) {
+        @@media (min-width: 481px) and (max-width: 992px) {
          
 
             .cartItemImg{
                 height: 50px;
                 width: auto;
             } 
-
+            .cartItemQty {
+                width: fit-content;
+            }
           
         }
 
 
-        @@media (min-width: 992px) {
+        @@media (min-width: 993px) {
          
 
             .cartItemImg{
-               height:70px;
+               height:90px;
                width:auto;
             } 
 
@@ -64,7 +66,8 @@
 <body>
     <partial name="_Header" />
     <partial name="_Notification" />
-    <div class="container" style="min-height:436px;">
+@*     <div class="container" style="min-height:436px;">
+ *@    <div class="container" style="min-height:78vh;">
         <main role="main" class="">
             @RenderBody()
         </main>
